@@ -1,0 +1,597 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import ScreenFrame from '../components/ScreenFrame.astro';
+import DemoDialog from '../components/DemoDialog.astro';
+import { linkNerc, COM_002_4_URL, COM_003_1_URL, NERC_URL } from '../lib/nerc';
+import logo from '../assets/brand/dca-logo.svg';
+import ksmLogo from '../assets/brand/ksm-logo-white.svg';
+
+import searchShot from '../assets/screens/search-advanced.png';
+import transcriptShot from '../assets/screens/call-transcript-playback.png';
+import askShot from '../assets/screens/search-ai-chatbot.png';
+import callLogShot from '../assets/screens/call-log.png';
+import statusShot from '../assets/screens/call-status.png';
+import emergencyShot from '../assets/screens/emergency-windows.png';
+import termsShot from '../assets/screens/dictionary-terms.png';
+import dashboardShot from '../assets/screens/dashboard.png';
+
+const nav = [
+  { href: '#features', label: 'Features' },
+  { href: '#departments', label: 'Who benefits' },
+  { href: '#compliance', label: 'Compliance' },
+  { href: '#entities', label: 'Built for' },
+];
+
+const steps = [
+  { icon: 'database', title: 'Recorded', text: 'Your existing call recording system keeps capturing every control-room line.' },
+  { icon: 'wave', title: 'Transcribed', text: 'Each recording becomes a timestamped transcript, checked for quality and confidence.' },
+  { icon: 'users', title: 'Who spoke when', text: 'Speakers are separated and labeled, so every line is attributed to the person who said it.' },
+  { icon: 'play', title: 'Found and played', text: 'Search by what was said, when, and on which line, then play the recording from that exact moment.' },
+] as const;
+
+const features = [
+  {
+    eyebrow: 'Transcript & playback',
+    title: 'Read along, then play from that point',
+    text: 'Every call opens as a conversation, not a waveform. Each line is attributed to a speaker, stamped with its time and playable on its own.',
+    bullets: [
+      'Speaker-labeled lines with a play button on each one',
+      'Confidence check on every line, so reviewers know what to verify',
+      'Corrections tracked in a full change history',
+      'Equipment, units, acronyms and members tagged as they are said',
+    ],
+    shot: transcriptShot,
+    alt: 'A call transcript with two speakers, timestamps, play buttons and tagged terms',
+    frameTitle: 'Call · Dispatch 3 · Outgoing',
+  },
+  {
+    eyebrow: 'Ask',
+    title: 'Ask a question, get an answer with sources',
+    text: 'Ask in plain English, such as which breaker tripped at a station or what was handed over at shift change. Answers come only from the call transcripts, and every sentence links back to the call it came from.',
+    bullets: [
+      'Shortcuts for equipment, alerts, shift handovers, tickets and terms',
+      'Every sentence cites its source call and moment',
+      'No answers from outside your own recordings',
+    ],
+    shot: askShot,
+    alt: 'The Ask page with a question box and shortcut buttons for equipment, alerts, shift handovers, tickets and dictionary',
+    frameTitle: 'Ask',
+  },
+  {
+    eyebrow: 'Call log',
+    title: 'Every call, its status at a glance',
+    text: 'See each call with its line, direction, station and length, plus icons that show whether the transcript is clear, whether three-part communication was used, whether it fell in an emergency, and whether it is under Legal Hold.',
+    bullets: [
+      'Filter to emergency calls in one click',
+      'Three-part communication detected automatically',
+      'Legal Hold and hold-released status on each call',
+    ],
+    shot: callLogShot,
+    inset: statusShot,
+    alt: 'A list of calls with line, direction, station, length and status icons',
+    frameTitle: 'Calls',
+  },
+  {
+    eyebrow: 'Emergency windows',
+    title: 'Declare the emergency once; every call in it is marked',
+    text: 'Declare an IROL, SOL, capacity, load-shed or other emergency for a period. Every call that overlaps it is flagged, so the calls you must show under NERC COM-002-4 are already gathered.',
+    bullets: [
+      'Kind, start, end and reason recorded with each window',
+      'Calls are re-marked automatically when a window changes',
+      'Open-ended windows for events still in progress',
+    ],
+    shot: emergencyShot,
+    alt: 'Editing an emergency window with its kind, dates and reason',
+    frameTitle: 'Emergencies',
+  },
+  {
+    eyebrow: 'Terms dictionary',
+    title: 'Teach it how your control room talks',
+    text: 'Add your stations, equipment, procedures, members, ISOs and RTOs, transmission lines, acronyms and jargon, along with the ways people actually say them. Transcripts and search both get better.',
+    bullets: [
+      'A picked name also finds the other ways it was said, such as "limb one" for Limerick 1',
+      'Units, storms, events and more, grouped by kind',
+      'Shared across every user and every call',
+    ],
+    shot: termsShot,
+    alt: 'The terms dictionary listing members, acronyms and jargon with how people say them',
+    frameTitle: 'Terms',
+  },
+] as const;
+
+const departments = [
+  {
+    icon: 'headset',
+    name: 'Dispatch',
+    aka: 'Control room',
+    points: [
+      'Check and report that NERC COM-003-1 three-part communication is being followed',
+      'Calls that discuss taking an outage are linked to the ticket in your outage ticketing system',
+      'Shift leads review and evaluate calls and use them as training moments',
+    ],
+  },
+  {
+    icon: 'shield',
+    name: 'Compliance',
+    aka: 'NERC COM-002-4 · COM-003-1',
+    points: [
+      'Call audio and metadata kept to your company retention policy',
+      'Calls that miss three-part communication are flagged',
+      'Timestamped recordings and transcripts as evidence that Operating Instructions were issued and confirmed',
+    ],
+  },
+  {
+    icon: 'dollar',
+    name: 'Market Settlements',
+    aka: 'Billing accuracy',
+    points: [
+      'Find the call behind a charge in seconds rather than hours',
+      'Settle questions such as which party requested a curtailment',
+      'Charge and bill market participants from what was actually said',
+    ],
+  },
+  {
+    icon: 'swap',
+    name: 'Transmission Services',
+    aka: 'Interchange checkout',
+    points: [
+      'Audit checkout calls between neighboring Balancing Authorities',
+      'Confirm both sides agreed on the exact MW value, path and timing for net scheduled interchange across tie lines',
+    ],
+  },
+] as const;
+
+const legalExamples = [
+  'Fatal or serious workplace accidents',
+  'Transmission switching disputes',
+  'Operator error investigations',
+  'FERC, NERC and OSHA investigations',
+  'Civil or criminal litigation',
+  'Discovery requests',
+  'Any event where a recording may become evidence',
+];
+
+const measures = [
+  {
+    id: 'M5',
+    who: 'Issuers · RC, TOP, BA',
+    text: 'For two-party Operating Instructions issued during an Emergency, show that the issuer confirmed the repeat-back was correct, reissued the instruction, or took another action.',
+  },
+  {
+    id: 'M6',
+    who: 'Recipients · BA, DP, GOP, TOP',
+    text: 'Show that the recipient repeated the instruction and received confirmation, or asked for it to be reissued.',
+  },
+  {
+    id: 'M7',
+    who: 'Burst instructions · BA, RC, TOP',
+    text: 'For single- or multiple-party burst instructions during an Emergency, show that at least one receiver got it.',
+  },
+];
+
+const entities = [
+  { abbr: 'BA', name: 'Balancing Authority', text: 'Real-time balance of generation and load, and interchange checkouts.' },
+  { abbr: 'RC', name: 'Reliability Coordinator', text: 'Wide-area reliability oversight and emergency coordination.' },
+  { abbr: 'TOP', name: 'Transmission Operator', text: 'Operates the high-voltage transmission grid.' },
+  { abbr: 'GOP', name: 'Generator Operator', text: 'Operates generating facilities and receives dispatch instructions.' },
+  { abbr: 'DP', name: 'Distribution Provider', text: 'Operates the distribution system that serves customers.' },
+  { abbr: 'ISO / RTO', name: 'Market operators', text: 'Run organized wholesale markets, dispatch and settlements.' },
+];
+
+const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 75, 45, 60, 85, 40, 70, 50, 95, 35, 65, 80, 45, 55, 30, 70];
+---
+<Layout
+  title="Dispatch Call Analytics · Find any control-room call by what was said"
+  description="Transcribe control-room call recordings, see who spoke when, and find any call by what was said, when and on which line. Built for NERC control rooms."
+>
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-white/5 bg-ink-950/75 backdrop-blur-lg">
+    <div class="container-page flex h-20 items-center justify-between gap-4">
+      <div class="flex shrink-0 items-center gap-4">
+        <a href="#top" class="-ml-2 shrink-0" aria-label="Dispatch Call Analytics home">
+          <img src={logo.src} alt="Dispatch Call Analytics" width="248" height="80" class="h-14 w-auto sm:h-16" />
+        </a>
+        <!-- KSM Technology Partners mark (white version, per KSM brand guidelines for dark backgrounds). -->
+        <a href="https://ksmpartners.com" target="_blank" rel="noopener noreferrer" class="hidden items-center gap-4 opacity-90 transition hover:opacity-100 sm:flex" aria-label="KSM Technology Partners">
+          <span class="h-10 w-px bg-white/15" aria-hidden="true"></span>
+          <img src={ksmLogo.src} alt="KSM Technology Partners" width="266" height="186" class="h-11 w-auto lg:h-12" />
+        </a>
+      </div>
+      <nav class="hidden items-center gap-8 text-sm text-slate-400 lg:flex" aria-label="Main">
+        {nav.map((n) => <a href={n.href} class="transition hover:text-white">{n.label}</a>)}
+      </nav>
+      <a href="#demo" data-open-demo class="btn-primary px-4 py-2 sm:px-5">Request a demo</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div class="absolute -top-40 left-1/2 h-[42rem] w-[70rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(59_130_246/0.28),transparent)]"></div>
+        <div class="absolute right-[-10rem] top-40 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(closest-side,rgb(34_211_238/0.14),transparent)]"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,rgb(148_163_184/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(148_163_184/0.06)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]"></div>
+      </div>
+
+      <div class="container-page pb-16 pt-16 text-center sm:pt-24">
+        <h1 class="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
+          Find any control-room call <span class="gradient-text">by what was said.</span>
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-400">
+          Dispatch Call Analytics transcribes your recorded calls, identifies who spoke when, and lets you find a call by what was said, when it was said, and which line it came in on. Then it plays the recording from that point.
+        </p>
+        <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <a href="#demo" data-open-demo class="btn-primary">Request a demo <Icon name="arrow" class="size-4" /></a>
+          <a href="#how" class="btn-ghost">See how it works</a>
+        </div>
+
+        <!-- Animated waveform with sweeping playhead -->
+        <div class="relative mx-auto mt-14 flex h-16 max-w-3xl items-end justify-between gap-1 sm:gap-1.5" aria-hidden="true">
+          {eqHeights.map((h, i) => (
+            <span
+              class={`eq-bar w-full rounded-full ${i < 13 ? 'bg-gradient-to-t from-cyan-400 to-blue-500' : 'bg-slate-700'}`}
+              style={`height:${h}%;animation-delay:${(i % 7) * -0.35}s`}
+            ></span>
+          ))}
+          <span class="playhead absolute -top-3 bottom-0 w-0.5 rounded-full bg-brand-amber shadow-[0_0_12px_rgb(245_158_11/0.8)]">
+            <span class="absolute -left-1 -top-1 size-2.5 rounded-full bg-brand-amber"></span>
+          </span>
+        </div>
+
+        <div class="relative mx-auto mt-14 max-w-6xl [perspective:2000px]">
+          <div class="absolute -inset-x-10 -inset-y-6 -z-10 rounded-[2rem] bg-gradient-to-b from-cyan-400/20 via-blue-500/10 to-transparent blur-3xl" aria-hidden="true"></div>
+          <ScreenFrame
+            src={searchShot}
+            alt="Searching calls for 'Sugar Hill' shows two matching calls, with the transcript open at the moment it was said"
+            title="Search · 2 calls found · 3 moments"
+            eager
+            sizes="(min-width: 1280px) 1152px, 100vw"
+            class="lg:[transform:rotateX(8deg)] lg:transition lg:duration-700 lg:hover:[transform:rotateX(0deg)]"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats strip -->
+    <section class="border-y border-white/5 bg-ink-900/60">
+      <div class="container-page grid grid-cols-2 gap-6 py-10 text-center md:grid-cols-4">
+        {[
+          ['Transcribe', 'within minutes of the call'],
+          ['Who spoke when', 'on every line of every call'],
+          ['Any moment', 'played from the exact second'],
+          ['Per call', 'Legal Hold and retention'],
+        ].map(([big, small]) => (
+          <div class="reveal">
+            <div class="text-2xl font-bold text-white sm:text-3xl">{big}</div>
+            <div class="mt-1 text-sm text-slate-400">{small}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="container-page py-24">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div class="reveal">
+          <p class="eyebrow">The problem</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Recorded isn't the same as findable.</h2>
+          <p class="mt-5 text-lg leading-relaxed text-slate-400">
+            Balancing Authorities, Reliability Coordinators, Transmission and Generator Operators, Distribution Providers, ISOs and RTOs record every control-room call. Finding a specific call, or what was said in it, still means listening through recordings by hand.
+          </p>
+          <p class="mt-4 leading-relaxed text-slate-400">
+            That is slow for everyone and costly for teams like Market Settlements, who rely on call content to charge and bill market participants accurately.
+          </p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {[
+            ['clock', 'Human transcription', 'People replay recordings and type up what was said, by hand, just to find one instruction or one MW value.'],
+            ['dollar', 'Billing disputes', 'Settlements need proof of who asked for what, and when.'],
+            ['shield', 'Audit pressure', 'NERC asks for dated, timestamped evidence of Operating Instructions.'],
+            ['scale', 'Legal exposure', 'Recordings must be preserved untouched when they may become evidence.'],
+          ].map(([icon, t, d]) => (
+            <div class="card reveal">
+              <div class="grid size-10 place-items-center rounded-lg bg-cyan-400/10 text-cyan-300 ring-1 ring-cyan-400/20">
+                <Icon name={icon as any} />
+              </div>
+              <h3 class="mt-4 font-semibold text-white">{t}</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-slate-400" set:html={linkNerc(d)} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- NERC standards band.
+           The emblem below is a text badge, not NERC's logo. If NERC grants written permission to use
+           its logo, place the approved file in src/assets/brand/ and swap it in for the badge. -->
+      <div class="reveal mt-16 flex flex-col items-start gap-6 rounded-2xl border border-amber-400/25 bg-gradient-to-r from-amber-400/[0.07] via-ink-900 to-ink-900 p-6 transition hover:border-amber-300/50 sm:flex-row sm:items-center sm:p-8">
+        <div class="grid size-20 shrink-0 place-items-center rounded-2xl border border-amber-400/40 bg-ink-850 text-center shadow-[0_0_30px_-8px_rgb(245_158_11/0.5)]">
+          <div>
+            <Icon name="shield" class="mx-auto size-6 text-amber-300" />
+            <a href={NERC_URL} target="_blank" rel="noopener noreferrer" class="ref-link mt-1 block text-[0.7rem] font-bold tracking-[0.2em] text-amber-200">NERC</a>
+          </div>
+        </div>
+        <div class="flex-1">
+          <p class="eyebrow text-amber-300" set:html={linkNerc("NERC communication standards")} />
+          <h3 class="mt-1.5 text-xl font-semibold text-white sm:text-2xl" set:html={linkNerc("Helps you meet NERC COM-002-4 and COM-003-1")} />
+          <p class="mt-2 text-sm leading-relaxed text-slate-400">
+            Dated, timestamped recordings and transcripts as evidence for Operating Instructions issued during an Emergency, with three-part communication checked on every call.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a href={COM_002_4_URL} target="_blank" rel="noopener noreferrer" class="chip border-amber-400/30 text-amber-100 transition hover:border-amber-300/60 hover:text-white">COM-002-4 – Operating Personnel Communications Protocols</a>
+            <a href={COM_003_1_URL} target="_blank" rel="noopener noreferrer" class="chip border-amber-400/30 text-amber-100 transition hover:border-amber-300/60 hover:text-white">COM-003-1 · Three-part communication</a>
+          </div>
+        </div>
+        <a href="#compliance" class="group inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-amber-300 hover:text-amber-200">
+          How it helps <Icon name="arrow" class="size-4 transition group-hover:translate-x-0.5" />
+        </a>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="relative border-y border-white/5 bg-ink-900/40 py-24">
+      <div class="container-page">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="eyebrow">How it works</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">From recording to the right moment</h2>
+          <p class="mt-4 text-slate-400">It works with the call recording system you already have. Nothing changes for your operators.</p>
+        </div>
+        <ol class="relative mt-14 grid gap-6 md:grid-cols-4">
+          <div class="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent md:block" aria-hidden="true"></div>
+          {steps.map((s, i) => (
+            <li class="reveal relative text-center">
+              <div class="relative mx-auto grid size-12 place-items-center rounded-xl border border-cyan-400/30 bg-ink-850 text-cyan-300 shadow-[0_0_24px_-6px_rgb(34_211_238/0.5)]">
+                <Icon name={s.icon} />
+              </div>
+              <p class="mt-5 text-xs font-semibold text-slate-500">Step {i + 1}</p>
+              <h3 class="mt-1 text-lg font-semibold text-white">{s.title}</h3>
+              <p class="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-slate-400">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+
+        <!-- Outage ticketing integration -->
+        <div class="reveal mx-auto mt-16 max-w-4xl overflow-hidden rounded-2xl border border-cyan-400/25 bg-gradient-to-r from-cyan-400/[0.07] via-ink-900 to-blue-500/[0.07] p-6 sm:p-8">
+          <div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+            <div class="flex shrink-0 items-center gap-2 text-cyan-300" aria-hidden="true">
+              <span class="grid size-12 place-items-center rounded-xl bg-ink-850 ring-1 ring-cyan-400/30"><Icon name="wave" /></span>
+              <Icon name="link" class="size-5 text-slate-500" />
+              <span class="grid size-12 place-items-center rounded-xl bg-ink-850 text-amber-300 ring-1 ring-amber-400/30"><Icon name="ticket" /></span>
+            </div>
+            <div>
+              <p class="eyebrow">Integration</p>
+              <h3 class="mt-1.5 text-xl font-semibold text-white">Linked to your outage ticketing system</h3>
+              <p class="mt-2 text-sm leading-relaxed text-slate-400">
+                When a call discusses taking an outage, the call is linked to the matching ticket in your external outage ticketing system. The conversation behind every outage is one click away, and you can search calls by ticket number.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="container-page space-y-28 py-28">
+      <div class="reveal mx-auto max-w-2xl text-center">
+        <p class="eyebrow">Features</p>
+        <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Built for the way control rooms work</h2>
+      </div>
+
+      {features.map((f, i) => (
+        <article class="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          <div class={`reveal lg:col-span-5 ${i % 2 ? 'lg:order-2' : ''}`}>
+            <p class="eyebrow">{f.eyebrow}</p>
+            <h3 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">{f.title}</h3>
+            <p class="mt-4 leading-relaxed text-slate-400" set:html={linkNerc(f.text)} />
+            <ul class="mt-6 space-y-3">
+              {f.bullets.map((b) => (
+                <li class="flex gap-3 text-sm text-slate-300">
+                  <Icon name="check" class="mt-0.5 size-4 shrink-0 text-cyan-300" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class={`reveal relative lg:col-span-7 ${i % 2 ? 'lg:order-1' : ''}`}>
+            <div class="absolute -inset-6 -z-10 rounded-[2rem] bg-blue-500/10 blur-3xl" aria-hidden="true"></div>
+            <ScreenFrame src={f.shot} alt={f.alt} title={f.frameTitle} sizes="(min-width: 1024px) 700px, 100vw" />
+            {'inset' in f && f.inset && (
+              <ScreenFrame
+                src={f.inset}
+                alt="Status icon legend: clear transcript, needs a look, low confidence, not checked, three-part communication, emergency, Legal Hold, Legal Hold released"
+                title="What the icons mean"
+                sizes="(min-width: 1024px) 520px, 90vw"
+                class="relative -mt-10 ml-auto w-[88%] sm:-mt-16 lg:-mr-6"
+              />
+            )}
+          </div>
+        </article>
+      ))}
+
+      <!-- Dashboard full width -->
+      <article class="reveal">
+        <div class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow">Dashboard</p>
+          <h3 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Operations at a glance</h3>
+          <p class="mt-4 text-slate-400">Calls today and in the last hour, transcript reliability and confidence, flagged calls and daily volume, per phone line or across all of them.</p>
+        </div>
+        <div class="relative mt-10">
+          <div class="absolute -inset-8 -z-10 rounded-[2rem] bg-cyan-400/10 blur-3xl" aria-hidden="true"></div>
+          <ScreenFrame src={dashboardShot} alt="Dashboard showing calls today, reliability, average confidence, flags and calls per day" title="Dashboard" sizes="(min-width: 1280px) 1216px, 100vw" />
+        </div>
+      </article>
+    </section>
+
+    <!-- Departments -->
+    <section id="departments" class="border-y border-white/5 bg-ink-900/40 py-24">
+      <div class="container-page">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="eyebrow">Who benefits</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">One system, value across the organization</h2>
+          <p class="mt-4 text-slate-400">The same searchable record pays off in the control room, in compliance, in legal and in the back office.</p>
+        </div>
+
+        <div class="mt-14 grid gap-5 md:grid-cols-2">
+          {departments.map((d) => (
+            <div class="card reveal">
+              <div class="flex items-center gap-4">
+                <div class="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-cyan-400/20 to-blue-500/20 text-cyan-300 ring-1 ring-cyan-400/30">
+                  <Icon name={d.icon} />
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white">{d.name}</h3>
+                  <p class="text-xs text-slate-500" set:html={linkNerc(d.aka)} />
+                </div>
+              </div>
+              <ul class="mt-5 space-y-2.5">
+                {d.points.map((p) => (
+                  <li class="flex gap-3 text-sm leading-relaxed text-slate-300">
+                    <span class="mt-2 size-1.5 shrink-0 rounded-full bg-brand-amber"></span>
+                    <span set:html={linkNerc(p)} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          <!-- Legal spans full width -->
+          <div class="card reveal md:col-span-2">
+            <div class="grid gap-8 lg:grid-cols-5">
+              <div class="lg:col-span-2">
+                <div class="flex items-center gap-4">
+                  <div class="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-indigo-400/20 to-violet-500/20 text-indigo-300 ring-1 ring-indigo-400/30">
+                    <Icon name="lock" />
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-white">Legal</h3>
+                    <p class="text-xs text-slate-500">Legal Hold, per call</p>
+                  </div>
+                </div>
+                <p class="mt-5 text-sm leading-relaxed text-slate-300">
+                  Place a Legal Hold on an individual call recording when it may be needed for litigation, a regulatory investigation or another legal proceeding. The hold preserves the recording and all its data, and blocks any change or deletion until an authorized administrator removes it.
+                </p>
+              </div>
+              <div class="lg:col-span-3">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">When a hold applies</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  {legalExamples.map((e) => <span class="chip" set:html={linkNerc(e)} />)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compliance -->
+    <section id="compliance" class="relative overflow-hidden py-24">
+      <div class="pointer-events-none absolute left-1/2 top-0 -z-10 h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(245_158_11/0.08),transparent)]" aria-hidden="true"></div>
+      <div class="container-page">
+        <div class="grid gap-12 lg:grid-cols-5">
+          <div class="reveal lg:col-span-2">
+            <p class="eyebrow" set:html={linkNerc("NERC compliance")} />
+            <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Evidence ready when the auditor asks</h2>
+            <p class="mt-5 leading-relaxed text-slate-400" set:html={linkNerc("NERC COM-002-4 accepts dated, timestamped voice recordings and transcripts as evidence for Operating Instructions issued during an Emergency. Dispatch Call Analytics keeps both, marks the calls that fall in each emergency window, and shows where three-part communication (COM-003-1) was followed.")} />
+            <div class="mt-8 space-y-3">
+              {[
+                ['repeat', 'Three-part communication detected and badged on each call'],
+                ['alert', 'Emergency windows mark every overlapping call'],
+                ['clock', 'Dated, timestamped recordings and transcripts'],
+                ['database', 'Kept to your company retention policy'],
+              ].map(([icon, t]) => (
+                <div class="flex items-center gap-3 text-sm text-slate-300">
+                  <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-amber-400/10 text-amber-300 ring-1 ring-amber-400/20"><Icon name={icon as any} class="size-4" /></span>
+                  {t}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="grid gap-4 lg:col-span-3">
+            {measures.map((m) => (
+              <div class="card reveal flex gap-5">
+                <div class="grid size-14 shrink-0 place-items-center rounded-xl border border-amber-400/30 bg-amber-400/5 text-lg font-bold text-amber-300">{m.id}</div>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><a class="ref-link" href={COM_002_4_URL} target="_blank" rel="noopener noreferrer">COM-002-4</a> · {m.who}</p>
+                  <p class="mt-2 text-sm leading-relaxed text-slate-300">{m.text}</p>
+                </div>
+              </div>
+            ))}
+            <p class="reveal px-1 text-xs leading-relaxed text-slate-500" set:html={linkNerc("Summaries of the COM-002-4 measures for orientation only; refer to the NERC standard for the exact requirements. Dispatch Call Analytics supplies evidence and does not replace your compliance program.")} />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Entities -->
+    <section id="entities" class="border-y border-white/5 bg-ink-900/40 py-24">
+      <div class="container-page">
+        <div class="reveal mx-auto max-w-2xl text-center">
+          <p class="eyebrow">Built for</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl" set:html={linkNerc("Every NERC functional entity with a control room")} />
+          <p class="mt-4 text-slate-400">Many organizations hold several of these registrations at once. Dispatch Call Analytics serves all of them from one record.</p>
+        </div>
+        <div class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {entities.map((e) => (
+            <div class="card reveal flex gap-4">
+              <div class="grid h-12 min-w-12 shrink-0 place-items-center rounded-xl bg-ink-850 px-2 text-sm font-bold text-cyan-300 ring-1 ring-cyan-400/25">{e.abbr}</div>
+              <div>
+                <h3 class="font-semibold text-white">{e.name}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-slate-400">{e.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Databricks -->
+    <section id="databricks" class="container-page py-24">
+      <div class="reveal relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-ink-850 via-ink-900 to-ink-950 p-8 sm:p-12">
+        <div class="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-[radial-gradient(closest-side,rgb(245_158_11/0.16),transparent)]" aria-hidden="true"></div>
+        <div class="grid items-center gap-8 lg:grid-cols-3">
+          <div class="lg:col-span-2">
+            <p class="eyebrow text-amber-300">Platform</p>
+            <h2 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Built on Databricks</h2>
+            <p class="mt-4 max-w-2xl leading-relaxed text-slate-400">
+              Dispatch Call Analytics is built on Databricks, with call recordings, transcripts and metadata stored according to your company's retention policy.
+            </p>
+          </div>
+          <div class="flex lg:justify-end">
+            <div class="inline-flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/5 px-5 py-4">
+              <Icon name="database" class="size-7 text-amber-300" />
+              <div class="font-semibold text-white">Built on Databricks</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="relative overflow-hidden pb-28">
+      <div class="container-page">
+        <div class="reveal relative overflow-hidden rounded-3xl border border-cyan-400/20 px-6 py-16 text-center sm:px-12">
+          <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgb(59_130_246/0.25),transparent_70%)]" aria-hidden="true"></div>
+          <h2 class="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-5xl">Hear it for yourself.</h2>
+          <p class="mx-auto mt-4 max-w-xl text-slate-400">See Dispatch Call Analytics search, transcribe and play back control-room calls in a live demo.</p>
+          <a href="#demo" data-open-demo class="btn-primary mt-8">Request a demo <Icon name="arrow" class="size-4" /></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5">
+    <div class="container-page flex flex-col items-center justify-between gap-6 py-10 text-sm text-slate-500 md:flex-row">
+      <img src={logo.src} alt="Dispatch Call Analytics" width="186" height="60" class="h-9 w-auto opacity-90" />
+      <p>
+        A product of <a href="https://ksmpartners.com" class="text-slate-300 hover:text-white">KSM Technology Partners</a> · © {new Date().getFullYear()}
+      </p>
+      <div class="flex gap-5">
+        <a class="hover:text-slate-300" href="https://app.termly.io/document/terms-of-use-for-website/9f9fe9fa-edb2-48d2-992e-51a9e7883962" target="_blank" rel="noopener noreferrer">Terms</a>
+        <a class="hover:text-slate-300" href="https://app.termly.io/document/privacy-policy/0dea1a71-b5c4-49e4-b691-77c30ef7f1c7" target="_blank" rel="noopener noreferrer">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <DemoDialog />
+</Layout>

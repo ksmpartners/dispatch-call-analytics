@@ -1,0 +1,22 @@
+{
+  "name": "dispatch-call-analytics-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Product website for Dispatch Call Analytics. Astro + Tailwind, deployed to GitHub Pages.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "astro": "^7.4.8",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "tailwindcss": "^4.3.5"
+  }
+}

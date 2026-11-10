@@ -1,0 +1,141 @@
+---
+// "Request a demo" dialog. Posts to the same Formspree form as the KSM Partners contact page.
+// Any element with [data-open-demo] opens it; linking to #demo opens it on load.
+import Icon from './Icon.astro';
+
+const FORMSPREE = 'https://formspree.io/f/xojndjkw';
+const roles = ['Dispatch / Control Room', 'Compliance', 'Legal', 'Market Settlements', 'Transmission Services', 'IT / Data', 'Other'];
+const entities = ['Balancing Authority', 'Distribution Provider', 'Generator Operator', 'Reliability Coordinator', 'Transmission Operator', 'ISO / RTO', 'Other'];
+---
+<dialog
+  id="demo"
+  aria-labelledby="demo-title"
+  class="m-auto w-[min(100%-2rem,36rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-slate-700 bg-ink-900 p-0 text-slate-300 shadow-2xl shadow-black"
+>
+  <div class="relative p-6 sm:p-8">
+    <button type="button" data-close-demo class="absolute right-4 top-4 rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white" aria-label="Close">
+      <Icon name="x" />
+    </button>
+
+    <div data-demo-form-wrap>
+      <p class="eyebrow">Request a demo</p>
+      <h2 id="demo-title" class="mt-2 text-2xl font-bold text-white">See Dispatch Call Analytics in action</h2>
+      <p class="mt-2 text-sm text-slate-400">Tell us a little about your organization and we'll follow up within one business day.</p>
+
+      <form id="demo-form" action={FORMSPREE} method="POST" class="mt-6 grid gap-4 sm:grid-cols-2">
+        <input type="hidden" name="_subject" value="Demo request: Dispatch Call Analytics" />
+        <input type="hidden" name="Product" value="Dispatch Call Analytics" />
+
+        <label class="grid gap-1.5 text-sm font-medium text-slate-200">
+          <span>Full name <span class="text-cyan-300" aria-hidden="true">*</span></span>
+          <input class="field" type="text" name="Full Name" required autocomplete="name" placeholder="Full name" />
+        </label>
+        <label class="grid gap-1.5 text-sm font-medium text-slate-200">
+          <span>Work email <span class="text-cyan-300" aria-hidden="true">*</span></span>
+          <input class="field" type="email" name="Email Address" required autocomplete="email" placeholder="email@example.com" />
+        </label>
+        <label class="grid gap-1.5 text-sm font-medium text-slate-200">
+          <span>Company</span>
+          <input class="field" type="text" name="Company" autocomplete="organization" placeholder="Company name" />
+        </label>
+        <label class="grid gap-1.5 text-sm font-medium text-slate-200">
+          <span>Your department</span>
+          <select class="field" name="Department">
+            <option value="">Select…</option>
+            {roles.map((r) => <option>{r}</option>)}
+          </select>
+        </label>
+        <label class="grid gap-1.5 text-sm font-medium text-slate-200 sm:col-span-2">
+          <span>Organization type</span>
+          <select class="field" name="Organization Type">
+            <option value="">Select…</option>
+            {entities.map((e) => <option>{e}</option>)}
+          </select>
+        </label>
+        <label class="grid gap-1.5 text-sm font-medium text-slate-200 sm:col-span-2">
+          <span>Anything we should know?</span>
+          <textarea class="field min-h-24" name="Message" placeholder="Call volume, recording system, what you'd like to see…"></textarea>
+        </label>
+
+        <label class="flex items-start gap-2.5 text-sm text-slate-400 sm:col-span-2">
+          <input id="demo-agree" type="checkbox" name="Agreed Privacy" value="Agreed" required class="mt-0.5 size-4 shrink-0 accent-cyan-400" />
+          <span>I agree to the <a class="text-cyan-300 underline-offset-2 hover:underline" href="https://app.termly.io/document/terms-of-use-for-website/9f9fe9fa-edb2-48d2-992e-51a9e7883962" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a> and <a class="text-cyan-300 underline-offset-2 hover:underline" href="https://app.termly.io/document/privacy-policy/0dea1a71-b5c4-49e4-b691-77c30ef7f1c7" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. <span class="text-cyan-300" aria-hidden="true">*</span></span>
+        </label>
+
+        <p data-demo-error class="hidden text-sm text-rose-400 sm:col-span-2" role="alert"></p>
+
+        <div class="sm:col-span-2">
+          <button id="demo-submit" type="submit" class="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none" disabled>
+            Request my demo
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div data-demo-success class="hidden py-6 text-center" role="status">
+      <div class="mx-auto grid size-14 place-items-center rounded-full bg-cyan-400/10 text-cyan-300 ring-1 ring-cyan-400/40">
+        <Icon name="check" class="size-7" />
+      </div>
+      <h2 class="mt-4 text-2xl font-bold text-white">Thanks, we'll be in touch</h2>
+      <p class="mt-2 text-sm text-slate-400">We've received your request and will follow up within one business day.</p>
+      <button type="button" data-close-demo class="btn-ghost mt-6">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('demo') as HTMLDialogElement;
+  const form = document.getElementById('demo-form') as HTMLFormElement;
+  const agree = document.getElementById('demo-agree') as HTMLInputElement;
+  const submit = document.getElementById('demo-submit') as HTMLButtonElement;
+  const errorEl = dialog.querySelector('[data-demo-error]') as HTMLElement;
+  const formWrap = dialog.querySelector('[data-demo-form-wrap]') as HTMLElement;
+  const success = dialog.querySelector('[data-demo-success]') as HTMLElement;
+
+  const open = () => {
+    if (!dialog.open) dialog.showModal();
+  };
+  document.querySelectorAll('[data-open-demo]').forEach((el) =>
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      open();
+    }),
+  );
+  dialog.querySelectorAll('[data-close-demo]').forEach((el) => el.addEventListener('click', () => dialog.close()));
+  // Close when clicking the backdrop.
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+  if (location.hash === '#demo') open();
+
+  agree.addEventListener('change', () => (submit.disabled = !agree.checked));
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.classList.add('hidden');
+    submit.disabled = true;
+    submit.textContent = 'Sending…';
+    try {
+      const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      formWrap.classList.add('hidden');
+      success.classList.remove('hidden');
+    } catch {
+      errorEl.textContent = 'Something went wrong sending your request. Please try again in a moment.';
+      errorEl.classList.remove('hidden');
+      submit.disabled = !agree.checked;
+    } finally {
+      submit.textContent = 'Request my demo';
+    }
+  });
+
+  // Reset to the form view after a successful send once the dialog closes.
+  dialog.addEventListener('close', () => {
+    if (!success.classList.contains('hidden')) {
+      success.classList.add('hidden');
+      formWrap.classList.remove('hidden');
+      submit.disabled = true;
+    }
+  });
+</script>
