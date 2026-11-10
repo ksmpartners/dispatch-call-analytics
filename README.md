@@ -46,7 +46,7 @@ To let others on your network see it, run `npx astro dev --host 0.0.0.0` and sha
 | Path | What |
 |---|---|
 | `src/pages/index.astro` | All page sections and copy (features, departments, compliance, entities) |
-| `src/components/DemoDialog.astro` | "Request a demo" form (Formspree `xojndjkw`, same as the KSM Partners contact page) |
+| `src/components/DemoDialog.astro` | "Request a demo" form (Formspree `xjywbglv`; if the form restricts domains, it must allow `www.ksmpartners.com`) |
 | `src/components/ScreenFrame.astro` | Screenshot window frame; images are converted to responsive WebP at build |
 | `src/lib/nerc.ts` | Links to NERC, COM-002-4 and COM-003-1; every mention in the page copy uses these |
 | `src/layouts/Layout.astro` | Page head: SEO, social-preview tags and structured data |

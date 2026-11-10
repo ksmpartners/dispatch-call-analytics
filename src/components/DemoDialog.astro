@@ -1,9 +1,9 @@
 ---
-// "Request a demo" dialog. Posts to the same Formspree form as the KSM Partners contact page.
+// "Request a demo" dialog. Posts to this site's own Formspree form.
 // Any element with [data-open-demo] opens it; linking to #demo opens it on load.
 import Icon from './Icon.astro';
 
-const FORMSPREE = 'https://formspree.io/f/xojndjkw';
+const FORMSPREE = 'https://formspree.io/f/xjywbglv';
 const roles = ['Dispatch / Control Room', 'Compliance', 'Legal', 'Market Settlements', 'Transmission Services', 'IT / Data', 'Other'];
 const entities = ['Balancing Authority', 'Distribution Provider', 'Generator Operator', 'Reliability Coordinator', 'Transmission Operator', 'ISO / RTO', 'Other'];
 ---
@@ -32,7 +32,7 @@ const entities = ['Balancing Authority', 'Distribution Provider', 'Generator Ope
         </label>
         <label class="grid gap-1.5 text-sm font-medium text-slate-200">
           <span>Work email <span class="text-cyan-300" aria-hidden="true">*</span></span>
-          <input class="field" type="email" name="Email Address" required autocomplete="email" placeholder="email@example.com" />
+          <input class="field" type="email" name="email" required autocomplete="email" placeholder="email@example.com" />
         </label>
         <label class="grid gap-1.5 text-sm font-medium text-slate-200">
           <span>Company</span>
@@ -117,12 +117,19 @@ const entities = ['Balancing Authority', 'Distribution Provider', 'Generator Ope
     submit.textContent = 'Sending…';
     try {
       const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        // Formspree replies with { errors: [{ message }] } explaining why it refused the submission.
+        const data = await res.json().catch(() => null);
+        const messages = (data?.errors ?? []).map((er: { message?: string }) => er.message).filter(Boolean);
+        throw new Error(messages.join(' '));
+      }
       form.reset();
       formWrap.classList.add('hidden');
       success.classList.remove('hidden');
-    } catch {
-      errorEl.textContent = 'Something went wrong sending your request. Please try again in a moment.';
+    } catch (err) {
+      // Show Formspree's reason when there is one; a network failure (TypeError) keeps the plain message.
+      const detail = err instanceof Error && !(err instanceof TypeError) && err.message ? ` (${err.message})` : '';
+      errorEl.textContent = `Something went wrong sending your request${detail}. Please try again in a moment.`;
       errorEl.classList.remove('hidden');
       submit.disabled = !agree.checked;
     } finally {
