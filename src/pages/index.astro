@@ -6,6 +6,7 @@ import DemoDialog from '../components/DemoDialog.astro';
 import { linkNerc, COM_002_4_URL, COM_003_1_URL, NERC_URL } from '../lib/nerc';
 import logo from '../assets/brand/dca-logo.svg';
 import ksmLogo from '../assets/brand/ksm-logo-white.svg';
+import databricksLogo from '../assets/brand/databricks-logo-white.svg';
 
 import searchShot from '../assets/screens/search-advanced.png';
 import transcriptShot from '../assets/screens/call-transcript-playback.png';
@@ -107,7 +108,7 @@ const departments = [
     aka: 'Control room',
     points: [
       'Check and report that NERC COM-003-1 three-part communication is being followed',
-      'Calls that discuss taking an outage are linked to the ticket in your outage ticketing system',
+      'Calls that discuss taking an outage are linked to the matching record in your Outage Management System (OMS)',
       'Shift leads review and evaluate calls and use them as training moments',
     ],
   },
@@ -350,7 +351,7 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
           ))}
         </ol>
 
-        <!-- Outage ticketing integration -->
+        <!-- Outage Management System (OMS) integration -->
         <div class="reveal mx-auto mt-16 max-w-4xl overflow-hidden rounded-2xl border border-cyan-400/25 bg-gradient-to-r from-cyan-400/[0.07] via-ink-900 to-blue-500/[0.07] p-6 sm:p-8">
           <div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
             <div class="flex shrink-0 items-center gap-2 text-cyan-300" aria-hidden="true">
@@ -360,9 +361,12 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
             </div>
             <div>
               <p class="eyebrow">Integration</p>
-              <h3 class="mt-1.5 text-xl font-semibold text-white">Linked to your outage ticketing system</h3>
+              <h3 class="mt-1.5 text-xl font-semibold text-white">Linked to your Outage Management System (OMS)</h3>
               <p class="mt-2 text-sm leading-relaxed text-slate-400">
-                When a call discusses taking an outage, the call is linked to the matching ticket in your external outage ticketing system. The conversation behind every outage is one click away, and you can search calls by ticket number.
+                When a call discusses taking an outage, the call is linked to the matching outage in your Outage Management System (OMS). The conversation behind every outage is one click away, and you can search calls by outage number.
+              </p>
+              <p class="mt-2 text-sm leading-relaxed text-slate-400">
+                Works with your own in-house OMS or with Open Access Technology International's (OATI) <a class="ref-link text-cyan-300" href="https://www.oati.com/websmartoms-datasheet/" target="_blank" rel="noopener noreferrer">webSmartOMS</a>, the platform OATI uses to manage grid outages.
               </p>
             </div>
           </div>
@@ -554,14 +558,14 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
             <p class="eyebrow text-amber-300">Platform</p>
             <h2 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Built on Databricks</h2>
             <p class="mt-4 max-w-2xl leading-relaxed text-slate-400">
-              Dispatch Call Analytics is built on Databricks, with call recordings, transcripts and metadata stored according to your company's retention policy.
+              Dispatch Call Analytics is built on Databricks, with call recordings, transcripts and metadata stored according to your company's retention policy. KSM Technology Partners is a Databricks certified partner.
             </p>
           </div>
           <div class="flex lg:justify-end">
-            <div class="inline-flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/5 px-5 py-4">
-              <Icon name="database" class="size-7 text-amber-300" />
-              <div class="font-semibold text-white">Built on Databricks</div>
-            </div>
+            <a href="https://www.databricks.com" target="_blank" rel="noopener noreferrer" class="inline-flex flex-col items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/5 px-6 py-5 transition hover:border-amber-300/60" aria-label="Databricks Certified Partner">
+              <img src={databricksLogo.src} alt="Databricks" width="713" height="113" class="h-8 w-auto" />
+              <span class="text-xs font-semibold uppercase tracking-wider text-amber-200">Certified Partner</span>
+            </a>
           </div>
         </div>
       </div>
