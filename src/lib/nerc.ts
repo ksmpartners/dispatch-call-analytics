@@ -3,13 +3,19 @@ export const NERC_URL = 'https://www.nerc.com/';
 export const COM_002_4_URL = 'https://www.nerc.com/globalassets/standards/reliability-standards/com/com-002-4.pdf';
 // NERC Project 2007-02 white paper (May 2012).
 export const COM_003_1_URL = 'https://www.nerc.com/globalassets/standards/projects/2007-02/com-003-1_white_paper_may-2012.pdf';
+export const CIP_011_3_URL = 'https://www.nerc.com/standards/reliability-standards/cip/cip-011-3';
+// KSM blog post on protecting BES Cyber System Information (BCSI) on Databricks under CIP-011-3.
+export const BCSI_BLOG_URL = 'https://www.ksmpartners.com/blog/databricks-nerc-cip-011-bcsi/';
 
 const urlFor = (m: string) =>
-  m.includes('COM-002-4') ? COM_002_4_URL : m.includes('COM-003-1') ? COM_003_1_URL : NERC_URL;
+  m.includes('COM-002-4') ? COM_002_4_URL
+  : m.includes('COM-003-1') ? COM_003_1_URL
+  : m.includes('CIP-011-3') ? CIP_011_3_URL
+  : NERC_URL;
 
 const a = (href: string, text: string) =>
   `<a class="ref-link" href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
 
 /** Returns HTML for trusted, static page copy with NERC references turned into links. */
 export const linkNerc = (text: string) =>
-  text.replace(/NERC COM-00[23]-[14]|COM-002-4|COM-003-1|NERC/g, (m) => a(urlFor(m), m));
+  text.replace(/NERC COM-00[23]-[14]|NERC CIP-011-3|COM-002-4|COM-003-1|CIP-011-3|NERC/g, (m) => a(urlFor(m), m));
