@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import ScreenFrame from '../components/ScreenFrame.astro';
 import DemoDialog from '../components/DemoDialog.astro';
-import { linkNerc, COM_002_4_URL, COM_003_1_URL, NERC_URL } from '../lib/nerc';
+import { linkNerc, COM_002_4_URL, COM_003_1_URL, NERC_URL, BCSI_BLOG_URL } from '../lib/nerc';
 import logo from '../assets/brand/dca-logo.svg';
 import ksmLogo from '../assets/brand/ksm-logo-white.svg';
 import databricksLogo from '../assets/brand/databricks-logo-white.svg';
@@ -524,6 +524,33 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
             <p class="reveal px-1 text-xs leading-relaxed text-slate-500" set:html={linkNerc("Summaries of the COM-002-4 measures for orientation only; refer to the NERC standard for the exact requirements. Dispatch Call Analytics supplies evidence and does not replace your compliance program.")} />
           </div>
         </div>
+
+        <!-- CIP-011-3 BCSI -->
+        <div class="reveal mt-16 rounded-2xl border border-amber-400/25 bg-gradient-to-r from-amber-400/[0.07] via-ink-900 to-ink-900 p-6 sm:p-8">
+          <div class="flex flex-col gap-8 lg:flex-row lg:items-start">
+            <div class="flex-1">
+              <p class="eyebrow text-amber-300" set:html={linkNerc("NERC CIP-011-3 · Information protection")} />
+              <h3 class="mt-1.5 text-xl font-semibold text-white sm:text-2xl">Protects the BES Cyber System Information in your calls</h3>
+              <p class="mt-3 text-sm leading-relaxed text-slate-400" set:html={linkNerc("Control-room calls can contain BES Cyber System Information (BCSI). Dispatch Call Analytics keeps recordings and transcripts in Databricks Unity Catalog, where BCSI can be tagged, masked or filtered, limited to an authorized group and logged, so you can produce access evidence for CIP-011-3 and CIP-004-7.")} />
+              <a href={BCSI_BLOG_URL} target="_blank" rel="noopener noreferrer" class="group mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-300 hover:text-amber-200">
+                Read our guide: Protecting BCSI on Databricks <Icon name="arrow" class="size-4 transition group-hover:translate-x-0.5" />
+              </a>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2 lg:w-[28rem] lg:shrink-0">
+              {[
+                ['lock', 'Calls and transcripts tagged as BCSI, with redaction for unauthorized users'],
+                ['users', 'Access granted to a group synced from your identity provider'],
+                ['list', 'Logins, queries and data access recorded in audit tables'],
+                ['shield', 'Customer-managed keys, Private Link and the compliance security profile'],
+              ].map(([icon, t]) => (
+                <div class="flex items-start gap-3 text-sm text-slate-300">
+                  <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-amber-400/10 text-amber-300 ring-1 ring-amber-400/20"><Icon name={icon as any} class="size-4" /></span>
+                  {t}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -558,7 +585,7 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
             <p class="eyebrow text-amber-300">Platform</p>
             <h2 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Built on Databricks</h2>
             <p class="mt-4 max-w-2xl leading-relaxed text-slate-400">
-              Dispatch Call Analytics is built on Databricks, with call recordings, transcripts and metadata stored according to your company's retention policy. KSM Technology Partners is a Databricks certified partner.
+              Dispatch Call Analytics is built on Databricks, with call recordings, transcripts and metadata stored according to your company's retention policy. Unity Catalog governs who can see BCSI, and audit tables record who did. KSM Technology Partners is a Databricks certified partner.
             </p>
           </div>
           <div class="flex lg:justify-end">
