@@ -1,7 +1,10 @@
 ---
-// A product screenshot in a dark app-window frame.
-import { Image } from 'astro:assets';
+// A product screenshot in a dark app-window frame. The picture is a button: clicking it (or
+// Enter) opens it full size in the page's one lightbox (Lightbox.astro). Three cues say so: a
+// "Click to enlarge" label in the window bar, a zoom-in cursor, and an expand button on hover.
+import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import Icon from './Icon.astro';
 
 interface Props {
   src: ImageMetadata;
@@ -12,23 +15,40 @@ interface Props {
   class?: string;
 }
 const { src, alt, title, eager = false, sizes = '(min-width: 1024px) 50vw, 100vw', class: cls = '' } = Astro.props;
+// The full-size copy the lightbox shows: WebP at the screenshot's own width, up to 2600 px.
+const full = await getImage({ src, format: 'webp', quality: 90, width: Math.min(src.width, 2600) });
 ---
-<figure class={`overflow-hidden rounded-xl border border-slate-700/70 bg-ink-850 shadow-2xl shadow-black/60 ring-1 ring-white/5 ${cls}`}>
+<figure class={`group overflow-hidden rounded-xl border border-slate-700/70 bg-ink-850 shadow-2xl shadow-black/60 ring-1 ring-white/5 ${cls}`}>
   <div class="flex items-center gap-2 border-b border-slate-800 bg-ink-900 px-4 py-2.5">
     <span class="size-2.5 rounded-full bg-slate-600"></span>
     <span class="size-2.5 rounded-full bg-slate-600"></span>
     <span class="size-2.5 rounded-full bg-slate-600"></span>
     {title && <span class="ml-3 truncate text-xs text-slate-400">{title}</span>}
+    <span class="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] font-medium text-slate-400 transition group-hover:text-cyan-300" aria-hidden="true">
+      <Icon name="expand" class="size-3.5" /> Click to enlarge
+    </span>
   </div>
-  <Image
-    src={src}
-    alt={alt}
-    widths={[640, 960, 1400, Math.min(src.width, 2000)]}
-    sizes={sizes}
-    format="webp"
-    quality={88}
-    loading={eager ? 'eager' : 'lazy'}
-    fetchpriority={eager ? 'high' : 'auto'}
-    class="block h-auto w-full"
-  />
+  <button
+    type="button"
+    class="relative m-0 block w-full appearance-none border-0 bg-transparent p-0 leading-none cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-cyan-300"
+    data-zoom={full.src}
+    data-zoom-title={title ?? ''}
+    data-zoom-alt={alt}
+    aria-label={`Enlarge: ${title ?? alt}`}
+  >
+    <Image
+      src={src}
+      alt={alt}
+      widths={[640, 960, 1400, Math.min(src.width, 2000)]}
+      sizes={sizes}
+      format="webp"
+      quality={88}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+      class="block h-auto w-full"
+    />
+    <span class="pointer-events-none absolute right-3 bottom-3 flex size-10 items-center justify-center rounded-full bg-ink-900/85 text-cyan-300 opacity-0 shadow-lg ring-1 ring-white/10 backdrop-blur transition group-hover:opacity-100 group-focus-within:opacity-100" aria-hidden="true">
+      <Icon name="expand" class="size-5" />
+    </span>
+  </button>
 </figure>

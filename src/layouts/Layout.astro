@@ -46,6 +46,7 @@ const jsonLd = {
     },
   ],
 };
+import Lightbox from '../components/Lightbox.astro';
 ---
 <!doctype html>
 <html lang="en">
@@ -82,5 +83,6 @@ const jsonLd = {
   </head>
   <body class="min-h-screen overflow-x-hidden font-sans">
     <slot />
+    <Lightbox />
   </body>
 </html>
