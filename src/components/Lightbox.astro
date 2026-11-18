@@ -1,0 +1,59 @@
+---
+// The page's one lightbox: any [data-zoom] button opens its full-size screenshot over a dark
+// backdrop. Closes with the ✕, Esc, or a click outside the picture; focus returns to the button.
+import Icon from './Icon.astro';
+---
+<dialog
+  id="lightbox"
+  class="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-black/85 backdrop:backdrop-blur-sm"
+  aria-label="Enlarged screenshot"
+>
+  <div class="flex h-dvh w-screen flex-col items-center justify-center gap-3 p-4 sm:p-8" data-lightbox-backdrop>
+    <div class="flex w-full max-w-[min(96vw,2600px)] items-center justify-between gap-4">
+      <p class="truncate text-sm font-medium text-slate-200" data-lightbox-title></p>
+      <button
+        type="button"
+        class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-slate-100 transition hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-cyan-300"
+        data-lightbox-close
+        aria-label="Close"
+      >
+        <Icon name="x" class="size-5" />
+      </button>
+    </div>
+    <div class="min-h-0 overflow-auto rounded-xl shadow-2xl ring-1 ring-white/10">
+      <img class="block h-auto max-h-[calc(100dvh-7rem)] w-auto max-w-[min(96vw,2600px)]" alt="" data-lightbox-img />
+    </div>
+    <p class="text-xs text-slate-400">Esc or click outside to close</p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement;
+  const img = dialog.querySelector('[data-lightbox-img]') as HTMLImageElement;
+  const title = dialog.querySelector('[data-lightbox-title]') as HTMLElement;
+  let opener: HTMLElement | null = null;
+
+  document.addEventListener('click', (e) => {
+    const button = (e.target as HTMLElement).closest<HTMLElement>('[data-zoom]');
+    if (!button) return;
+    opener = button;
+    img.src = button.dataset.zoom ?? '';
+    img.alt = button.dataset.zoomAlt ?? '';
+    title.textContent = button.dataset.zoomTitle ?? '';
+    dialog.showModal();
+    document.documentElement.style.overflow = 'hidden';
+  });
+
+  const close = () => dialog.close();
+  dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
+  // A click on the dark area (not the picture or the bar) closes it.
+  dialog.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t === dialog || t.hasAttribute('data-lightbox-backdrop')) close();
+  });
+  dialog.addEventListener('close', () => {
+    document.documentElement.style.overflow = '';
+    img.removeAttribute('src');
+    opener?.focus();
+  });
+</script>
