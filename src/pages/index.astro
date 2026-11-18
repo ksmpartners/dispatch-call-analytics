@@ -43,8 +43,8 @@ const features = [
       'Equipment, units, acronyms and members tagged as they are said',
     ],
     shot: transcriptShot,
-    alt: 'A call transcript with two speakers, timestamps, play buttons and tagged terms',
-    frameTitle: 'Call · Dispatch 3 · Outgoing',
+    alt: 'A call transcript with two speakers, timestamps, play buttons and tagged terms, under the emergency and operating conditions the call falls in',
+    frameTitle: 'Call · Dispatch 1 · Incoming',
   },
   {
     eyebrow: 'Ask',
@@ -62,15 +62,15 @@ const features = [
   {
     eyebrow: 'Call log',
     title: 'Every call, its status at a glance',
-    text: 'See each call with its line, direction, station and length, plus icons that show whether the transcript is clear, whether three-part communication was used, whether it fell in an emergency, and whether it is under Legal Hold.',
+    text: 'See each call with its line, direction, station and length, plus icons that show whether the transcript is clear, whether three-part communication was used, which operating conditions it fell in, and whether it is under Legal Hold.',
     bullets: [
-      'Filter to emergency calls in one click',
+      'Filter by operating condition in one click',
       'Three-part communication detected automatically',
       'Legal Hold and hold-released status on each call',
     ],
     shot: callLogShot,
     inset: statusShot,
-    alt: 'A list of calls with line, direction, station, length and status icons',
+    alt: 'A list of calls with line, direction, station, length, operating condition icons and status icons',
     frameTitle: 'Calls',
   },
   {
@@ -78,13 +78,13 @@ const features = [
     title: 'Record the condition once; every call in it is marked',
     text: 'Record an emergency, scheduled maintenance, system outage, market, communications or external event for a period. Every call that overlaps it is labeled, and emergency calls are flagged, so the calls you must show under NERC COM-002-4 are already gathered.',
     bullets: [
-      'Kind, severity, start, end and description recorded with each condition',
+      'Category, type, severity, start, end and description recorded with each condition',
       'Calls are re-marked automatically when a condition changes',
       'Overlapping, planned-ahead and open-ended conditions',
     ],
     shot: conditionsShot,
     wide: true, // a wide screen: its words above, the picture across the page
-    alt: 'The Operating Conditions page with each condition\'s kind, severity and period',
+    alt: 'Adding an operating condition with its category, type, period and severity, over the list of conditions in effect',
     frameTitle: 'Operating Conditions',
   },
   {
@@ -245,8 +245,8 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
           <div class="absolute -inset-x-10 -inset-y-6 -z-10 rounded-[2rem] bg-gradient-to-b from-cyan-400/20 via-blue-500/10 to-transparent blur-3xl" aria-hidden="true"></div>
           <ScreenFrame
             src={searchShot}
-            alt="Searching calls for 'Sugar Hill' shows two matching calls, with the transcript open at the moment it was said"
-            title="Search · 2 calls found · 3 moments"
+            alt="Searching calls for 'megawatts' shows 13 matching calls and 29 moments, with the transcript open at the moment it was said"
+            title="Search · 13 calls found · 29 moments"
             eager
             sizes="(min-width: 1280px) 1152px, 100vw"
             class="lg:[transform:rotateX(8deg)] lg:transition lg:duration-700 lg:hover:[transform:rotateX(0deg)]"
@@ -405,7 +405,7 @@ const eqHeights = [30, 55, 80, 45, 95, 60, 35, 70, 50, 85, 40, 65, 90, 55, 30, 7
             {'inset' in f && f.inset && (
               <ScreenFrame
                 src={f.inset}
-                alt="Status icon legend: clear transcript, needs a look, low confidence, not checked, three-part communication, emergency, Legal Hold, Legal Hold released"
+                alt="Status icon legend: clear transcript, needs a look, low confidence, not checked, three-part communication, and the operating conditions: emergency, Legal Hold, Legal Hold released, scheduled maintenance, system outage, market, communications and external events"
                 title="What the icons mean"
                 sizes="(min-width: 1024px) 520px, 90vw"
                 class="relative -mt-10 ml-auto w-[88%] sm:-mt-16 lg:-mr-6"
